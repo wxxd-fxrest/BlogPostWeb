@@ -1,6 +1,6 @@
 import { BoardListItem } from 'types/inderface';
 
-const latestBoardListMock: BoardListItem[] = [
+const top3BoardListMock: BoardListItem[] = [
     {
         boardNumber: 1,
         title: '잊지 못해~ 모든 게 변한다 해도~ 내 삶이 끝날 때 곁에 있는 걸~~',
@@ -40,4 +40,4 @@ const latestBoardListMock: BoardListItem[] = [
     },
 ];
 
-export default latestBoardListMock;
+export default top3BoardListMock;
