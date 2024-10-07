@@ -3,6 +3,7 @@ import CommentItem from 'components/CommentItem';
 import FavoriteItem from 'components/FavoriteItem';
 import InputBox from 'components/InputBox';
 import Top3Item from 'components/Top3Item';
+import Footer from 'layouts/Footer';
 import commentListMock from 'mocks/comment-list.mock';
 import favoriteListMock from 'mocks/favorite-list.mock';
 import latestBoardListMock from 'mocks/latest-board-list.mock';
@@ -37,7 +38,8 @@ function App() {
                     <FavoriteItem favoriteListItem={favoriteListItem} />
                 ))}
             </div> */}
-            <InputBox
+            {/* InputBox */}
+            {/* <InputBox
                 label="이메일"
                 type="text"
                 placeholder="이메일을 입력해 주세요."
@@ -45,7 +47,8 @@ function App() {
                 error={false}
                 setValue={setValue}
                 message="aaa"
-            />
+            /> */}
+            <Footer />
         </>
     );
 }
