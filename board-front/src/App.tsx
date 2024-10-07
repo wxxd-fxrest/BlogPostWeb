@@ -1,55 +1,49 @@
-import BoardItem from 'components/BoardItem';
-import CommentItem from 'components/CommentItem';
-import FavoriteItem from 'components/FavoriteItem';
-import InputBox from 'components/InputBox';
-import Top3Item from 'components/Top3Item';
-import Footer from 'layouts/Footer';
-import commentListMock from 'mocks/comment-list.mock';
-import favoriteListMock from 'mocks/favorite-list.mock';
-import latestBoardListMock from 'mocks/latest-board-list.mock';
-import top3BoardListMock from 'mocks/top-3-board-list.mock';
-import { useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import {
+    AUTH_PATH,
+    MAIN_PATH,
+    SEARCH_PATH,
+    USER_PATH,
+    BOARD_PATH,
+    BOARD_WRITE_PATH,
+    BOARD_DETAIL_PATH,
+    BOARD_UPDATE_PATH,
+} from 'constant';
+import Container from 'layouts/Container';
+import Authentication from 'views/Authentication';
+import BoardDetail from 'views/Board/Detail';
+import BoardUpdate from 'views/Board/Update';
+import BoardWrite from 'views/Board/Write';
+import Main from 'views/Main';
+import Search from 'views/Search';
+import User from 'views/User';
 import './App.css';
 
+// component: Application Coponent
 function App() {
-    const [value, setValue] = useState<string>('');
-
+    // render: Application Component Rendering
+    // description: Main Screen| '/' -Main
+    // description: Login + Signup Screen| '/auth' -Authentication
+    // description: Search Screen| '/search/:word' -Search
+    // description: User Screen| 'user/:userEmail' -User
+    // description: Post Detail Screen| 'board/detail/:boardNumber' -BoardDetail
+    // description: Post Write Screen| 'board/write' -BoardWrite
+    // description: Post Edit Screen| 'board/update' -BoardUpdate
     return (
-        <>
-            {/* BoardItem */}
-            {/* {latestBoardListMock.map((boardListItem) => (
-                <BoardItem boardListItem={boardListItem} />
-            ))} */}
-            {/* Top3Item */}
-            {/* <div style={{ display: 'flex', justifyContent: 'center', gap: '24px' }}>
-                {top3BoardListMock.map((boardListItem) => (
-                    <Top3Item top3ListItem={boardListItem} />
-                ))}
-            </div> */}
-            {/* CommentItem */}
-            {/* <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
-                {commentListMock.map((commentListItem) => (
-                    <CommentItem commentListItem={commentListItem} />
-                ))}
-            </div> */}
-            {/* CommentItem */}
-            {/* <div style={{ display: 'flex', columnGap: '30px', rowGap: '20px' }}>
-                {favoriteListMock.map((favoriteListItem) => (
-                    <FavoriteItem favoriteListItem={favoriteListItem} />
-                ))}
-            </div> */}
-            {/* InputBox */}
-            {/* <InputBox
-                label="이메일"
-                type="text"
-                placeholder="이메일을 입력해 주세요."
-                value={value}
-                error={false}
-                setValue={setValue}
-                message="aaa"
-            /> */}
-            <Footer />
-        </>
+        <Routes>
+            <Route element={<Container />}>
+                <Route path={MAIN_PATH} element={<Main />} />
+                <Route path={AUTH_PATH} element={<Authentication />} />
+                <Route path={SEARCH_PATH(':searchWord')} element={<Search />} />
+                <Route path={USER_PATH(':useremail')} element={<User />} />
+                <Route path={BOARD_PATH()}>
+                    <Route path={BOARD_WRITE_PATH()} element={<BoardWrite />} />
+                    <Route path={BOARD_DETAIL_PATH(':boardNumber')} element={<BoardDetail />} />
+                    <Route path={BOARD_UPDATE_PATH(':boardNumber')} element={<BoardUpdate />} />
+                </Route>
+                <Route path="*" element={<h1>404 Not Found</h1>} />
+            </Route>
+        </Routes>
     );
 }
 
