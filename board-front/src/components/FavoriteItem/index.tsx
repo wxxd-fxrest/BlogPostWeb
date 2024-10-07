@@ -1,6 +1,6 @@
 import React from 'react';
 import './style.css';
-import DefaultProfileImage from 'assets/images/Ellipse 1.png';
+import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { FavoriteListItem } from 'types/inderface';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ interface Props {
 
 // component: Top3 List Item 컴포넌트
 export default function FavoriteItem({ favoriteListItem }: Props) {
-    // properties
+    // state: properties
     const { nickname, profileImage } = favoriteListItem;
 
     // function: 네비게이트 함수

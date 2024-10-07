@@ -1,6 +1,6 @@
 import React from 'react';
 import './style.css';
-import DefaultProfileImage from 'assets/images/Ellipse 1.png';
+import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { BoardListItem } from 'types/inderface';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ interface Props {
 
 // component: Top3 List Item 컴포넌트
 export default function Top3Item({ top3ListItem }: Props) {
-    // properties
+    // state: properties
     const { boardNumber, title, content, boardTitleImage } = top3ListItem;
     const { favoriteCount, commentCount, viewCount } = top3ListItem;
     const { writeDatetime, writeNickname, writerProfileImage } = top3ListItem;

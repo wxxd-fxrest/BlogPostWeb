@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BoardListItem } from 'types/inderface';
 import './style.css';
-import DefaultProfileImage from 'assets/images/Ellipse 1.png';
+import DefaultProfileImage from 'assets/images/default-profile-image.png';
 
 interface Props {
     boardListItem: BoardListItem;
@@ -10,7 +10,7 @@ interface Props {
 
 // component: Board List Item 컴포넌트
 export default function BoardItem({ boardListItem }: Props) {
-    // properties
+    // state: properties
     const { boardNumber, title, content, boardTitleImage } = boardListItem;
     const { favoriteCount, commentCount, viewCount } = boardListItem;
     const { writeDatetime, writeNickname, writerProfileImage } = boardListItem;
