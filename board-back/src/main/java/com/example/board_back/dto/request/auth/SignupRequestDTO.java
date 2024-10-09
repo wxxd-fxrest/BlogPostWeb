@@ -30,5 +30,5 @@ public class SignupRequestDTO {
     private String addressDetail;
 
     @NotNull @AssertTrue
-    private String agreedPersonal;
+    private Boolean agreedPersonal;
 }

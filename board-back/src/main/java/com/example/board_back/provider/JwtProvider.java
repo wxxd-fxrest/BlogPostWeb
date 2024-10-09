@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 
 @Component
 public class JwtProvider {
-    @Value("${secret-key")
+    @Value("${secret-key}")
     private String secretKey;
 
     // JWT 생성
