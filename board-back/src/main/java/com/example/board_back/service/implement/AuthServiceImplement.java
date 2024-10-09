@@ -5,10 +5,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.board_back.dto.request.auth.SigninRequestDTO;
 import com.example.board_back.dto.request.auth.SignupRequestDTO;
 import com.example.board_back.dto.response.ResponseDTO;
+import com.example.board_back.dto.response.auth.SigninResponseDTO;
 import com.example.board_back.dto.response.auth.SignupResponseDTO;
 import com.example.board_back.entity.UserEntity;
+import com.example.board_back.provider.JwtProvider;
 import com.example.board_back.repository.UserRepository;
 import com.example.board_back.service.AuthService;
 
@@ -17,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImplement implements AuthService {
-    public final UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -47,5 +51,29 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDTO.databaseError();
         }
         return SignupResponseDTO.success();
+    }
+
+    @Override
+    public ResponseEntity<? super SigninResponseDTO> signIn(SigninRequestDTO dto) {
+        String token = null;
+
+        try {
+            String email = dto.getEmail();
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if(userEntity == null) return SigninResponseDTO.signInFail();
+
+            String password = dto.getPassword();
+            String encodedPassword = userEntity.getPassword();
+            boolean isMathced = passwordEncoder.matches(password, encodedPassword);
+            if(!isMathced) return SigninResponseDTO.signInFail();
+
+            token = jwtProvider.create(email);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return SigninResponseDTO.success(token);
     }
 }
