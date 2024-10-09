@@ -13,7 +13,7 @@ export default function BoardItem({ boardListItem }: Props) {
     // state: properties
     const { boardNumber, title, content, boardTitleImage } = boardListItem;
     const { favoriteCount, commentCount, viewCount } = boardListItem;
-    const { writeDatetime, writeNickname, writerProfileImage } = boardListItem;
+    const { writeDatetime, writerNickname, writerProfileImage } = boardListItem;
 
     // function: 네비게이트 함수
     // const navigator = useNavigate();
@@ -43,7 +43,7 @@ export default function BoardItem({ boardListItem }: Props) {
                     </div>
                     {/* Card Left Top Write Box - 작성자 이름/ 작성 날짜 */}
                     <div className="board-list-item-write-box">
-                        <div className="board-list-item-nickname">{writeNickname}</div>
+                        <div className="board-list-item-nickname">{writerNickname}</div>
                         <div className="board-list-item-write-date">{writeDatetime}</div>
                     </div>
                 </div>
