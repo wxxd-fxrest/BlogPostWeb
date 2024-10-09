@@ -1,8 +1,17 @@
-import { AUTH_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
+import {
+    AUTH_PATH,
+    BOARD_DETAIL_PATH,
+    BOARD_PATH,
+    BOARD_UPDATE_PATH,
+    BOARD_WRITE_PATH,
+    MAIN_PATH,
+    SEARCH_PATH,
+    USER_PATH,
+} from 'constant';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useLoginUserStore } from 'stores';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useBoardStore, useLoginUserStore } from 'stores';
 import './style.css';
 
 // component: Header Layout
@@ -15,6 +24,19 @@ export default function Header() {
 
     // state: Login state
     const [isLogin, setLogin] = useState<boolean>(false);
+
+    // state: path state
+    const { pathname } = useLocation();
+
+    // state: path page state
+
+    const [isAuthPage, setAuthPage] = useState<boolean>(false);
+    const [isMainPage, setMainPage] = useState<boolean>(false);
+    const [isSearchPage, setSearchPage] = useState<boolean>(false);
+    const [isBoardDetailPage, setBoardDetailPage] = useState<boolean>(false);
+    const [isBoardWritePage, setBoardWritePage] = useState<boolean>(false);
+    const [isBoardUpdatePage, setBoardUpadatePage] = useState<boolean>(false);
+    const [isUserPage, setUserPage] = useState<boolean>(false);
 
     // function: navigate func
     const navigate = useNavigate();
@@ -137,6 +159,42 @@ export default function Header() {
         );
     };
 
+    // component: Upload Button Component
+    const Uploadbutton = () => {
+        // state: 게시글 상태
+        const { title, content, boardImageFileList, resetBoard } = useBoardStore();
+
+        const onUploadButtonClickHandler = () => {};
+
+        // render: Upload Button Component Rendering
+        if (title && content)
+            return (
+                <div className="black-=button" onClick={onUploadButtonClickHandler}>
+                    {'업로드'}
+                </div>
+            );
+        // render: Upload 불가 Button Component Rendering
+        return <div className="disable-button">{'업로드'}</div>;
+    };
+
+    // effect: path 변경 시 실행될 func
+    useEffect(() => {
+        const isAuthPage = pathname.startsWith(AUTH_PATH);
+        setAuthPage(isAuthPage);
+        const isMainPage = pathname === MAIN_PATH;
+        setMainPage(isMainPage);
+        const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+        setSearchPage(isSearchPage);
+        const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+        setBoardDetailPage(isBoardDetailPage);
+        const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
+        setBoardWritePage(isBoardWritePage);
+        const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
+        setBoardUpadatePage(isBoardUpdatePage);
+        const isUserPage = pathname.startsWith(USER_PATH(''));
+        setUserPage(isUserPage);
+    }, [pathname]);
+
     // render: Header Layout Rendering
     return (
         <div id="header">
@@ -148,8 +206,9 @@ export default function Header() {
                     <div className="header-logo">{'Hoons Board'}</div>
                 </div>
                 <div className="header-right-box">
-                    <SearchButton />
-                    <LoginMyPageButton />
+                    {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage) && <SearchButton />}
+                    {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage) && <LoginMyPageButton />}
+                    {(isBoardWritePage || isBoardUpdatePage) && <Uploadbutton />}
                 </div>
             </div>
         </div>
