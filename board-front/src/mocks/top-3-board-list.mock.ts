@@ -11,7 +11,7 @@ const top3BoardListMock: BoardListItem[] = [
         commentCount: 0,
         viewCount: 0,
         writeDatetime: '2024.09.13 00:13:32',
-        writeNickname: '안녕나는WOOD',
+        writerNickname: '안녕나는WOOD',
         writerProfileImage: 'https://i.pinimg.com/736x/64/2e/61/642e6164b268c4194a192599ee291e87.jpg',
     },
     {
@@ -23,7 +23,7 @@ const top3BoardListMock: BoardListItem[] = [
         commentCount: 20,
         viewCount: 0,
         writeDatetime: '2024.09.13 00:13:32',
-        writeNickname: '안녕나는WOOD',
+        writerNickname: '안녕나는WOOD',
         writerProfileImage: null,
     },
     {
@@ -35,7 +35,7 @@ const top3BoardListMock: BoardListItem[] = [
         commentCount: 20,
         viewCount: 0,
         writeDatetime: '2024.09.13 00:13:32',
-        writeNickname: '안녕나는WOOD',
+        writerNickname: '안녕나는WOOD',
         writerProfileImage: null,
     },
 ];

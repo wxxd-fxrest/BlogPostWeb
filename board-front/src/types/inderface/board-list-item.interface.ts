@@ -7,6 +7,6 @@ export default interface BoardListItem {
     commentCount: number;
     viewCount: number;
     writeDatetime: string;
-    writeNickname: string;
+    writerNickname: string;
     writerProfileImage: string | null;
 }
