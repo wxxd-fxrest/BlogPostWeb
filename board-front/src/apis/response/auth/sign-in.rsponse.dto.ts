@@ -1,4 +1,4 @@
-import ResponseDTO from '../response.dto';
+import ResponseDTO from '../Response.dto';
 
 export default interface SigninResponseDTO extends ResponseDTO {
     token: string;
