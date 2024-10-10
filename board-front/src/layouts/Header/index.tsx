@@ -39,11 +39,11 @@ export default function Header() {
     const [isUserPage, setUserPage] = useState<boolean>(false);
 
     // function: navigate func
-    const navigate = useNavigate();
+    const navigator = useNavigate();
 
     // event handler: Logo click event
     const onLogoClickHandleer = () => {
-        navigate(MAIN_PATH);
+        navigator(MAIN_PATH());
     };
 
     // component: Search Button Component
@@ -76,7 +76,7 @@ export default function Header() {
                 setStatus(!status);
                 return;
             }
-            navigate(SEARCH_PATH(word));
+            navigator(SEARCH_PATH(word));
         };
 
         // effect: Search Word path variable Change func
@@ -123,18 +123,18 @@ export default function Header() {
         const onMyPageButtonClickHandler = () => {
             if (!loginUser) return;
             const { email } = loginUser;
-            navigate(USER_PATH(email));
+            navigator(USER_PATH(email));
         };
 
         // event handler: SignIn Button Click func
         const onSignInButtonClickHandler = () => {
-            navigate(AUTH_PATH);
+            navigator(AUTH_PATH());
         };
 
         // event handler: SignOut Button Click func
         const onSignOutButtonClickHandler = () => {
             resetLoginUser();
-            navigate(MAIN_PATH);
+            navigator(MAIN_PATH());
         };
 
         if (isLogin && userEmail === loginUser?.email)
@@ -179,9 +179,9 @@ export default function Header() {
 
     // effect: path 변경 시 실행될 func
     useEffect(() => {
-        const isAuthPage = pathname.startsWith(AUTH_PATH);
+        const isAuthPage = pathname.startsWith(AUTH_PATH());
         setAuthPage(isAuthPage);
-        const isMainPage = pathname === MAIN_PATH;
+        const isMainPage = pathname === MAIN_PATH();
         setMainPage(isMainPage);
         const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
         setSearchPage(isSearchPage);
