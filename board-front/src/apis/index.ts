@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SigninRequestDTO, SignupRequestDTO } from './request/auth';
 import { ResponseDTO } from './response';
-import { SigninResponseDTO } from './response/auth';
+import { SigninResponseDTO, SignupResponseDTO } from './response/auth';
 
 const DOMAIN = 'http://localhost:4000';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
@@ -27,4 +27,17 @@ export const signInRequest = async (requestBody: SigninRequestDTO) => {
     return result;
 };
 
-export const signUpRequest = (requestBody: SignupRequestDTO) => {};
+export const signUpRequest = async (requestBody: SignupRequestDTO) => {
+    const result = await axios
+        .post(SIGN_UP_URL(), requestBody)
+        .then((response) => {
+            const responseBody: SignupResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response.data) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
