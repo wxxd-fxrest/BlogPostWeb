@@ -29,7 +29,6 @@ export default function Header() {
     const { pathname } = useLocation();
 
     // state: path page state
-
     const [isAuthPage, setAuthPage] = useState<boolean>(false);
     const [isMainPage, setMainPage] = useState<boolean>(false);
     const [isSearchPage, setSearchPage] = useState<boolean>(false);
@@ -87,6 +86,11 @@ export default function Header() {
             }
         }, [searchWord]);
 
+        // effect: Login User 변경 시 실행 될 effect
+        useEffect(() => {
+            setLogin(loginUser !== null);
+        }, [loginUser]);
+
         if (!status) {
             // render: Search Button Rendering -> false
             return (
@@ -117,7 +121,7 @@ export default function Header() {
     // component: SignIn & MyPage Component
     const LoginMyPageButton = () => {
         // state: userEmail path variable state
-        const { userEmail } = useParams();
+        const { useremail } = useParams();
 
         // event handler: MyPage Button Click func
         const onMyPageButtonClickHandler = () => {
@@ -134,10 +138,11 @@ export default function Header() {
         // event handler: SignOut Button Click func
         const onSignOutButtonClickHandler = () => {
             resetLoginUser();
+            setCookies('accessToken', '', { path: MAIN_PATH(), expires: new Date() });
             navigator(MAIN_PATH());
         };
 
-        if (isLogin && userEmail === loginUser?.email)
+        if (isLogin && useremail === loginUser?.email)
             // render: Logout Button Component Rendering
             return (
                 <div className="white-button" onClick={onSignOutButtonClickHandler}>
@@ -148,7 +153,7 @@ export default function Header() {
             // render: Login Button Component Rendering -> true
             return (
                 <div className="white-button" onClick={onMyPageButtonClickHandler}>
-                    {'My page'}
+                    {'마이페이지'}
                 </div>
             );
         return (

@@ -81,7 +81,6 @@ export default function Authentication() {
         // event handler: Login Button click event func
         const onSignInButtonClickHandler = () => {
             const requestBody: SigninRequestDTO = { email, password };
-            console.log(requestBody);
             signInRequest(requestBody).then(signInResponse);
         };
 
@@ -360,30 +359,24 @@ export default function Authentication() {
 
         // event handler: Next Page Button click event
         const onNextButtonClickHandler = () => {
-            console.log('klsajdflsakddjf');
             const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
             const isEmailPattern = emailPattern.test(email);
             if (!isEmailPattern) {
                 setEmailError(true);
                 setEmailErrorMessage('이메일 주소가 형식에 알맞지 않습니다.');
             }
-            console.log('1');
             const isCheckPassword = password.trim().length >= 8;
             if (!isCheckPassword) {
                 setPasswordError(true);
                 setPasswordErrorMessage('비밀번호는 8자 이상 입력해 주세요.');
             }
-            console.log('2');
             const isEqualPassword = password === passwordCheck;
             if (!isEqualPassword) {
                 setPasswordCheckError(true);
                 setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
             }
-            console.log('3');
             if (!isEmailPattern || !isCheckPassword || !isEqualPassword) return;
-            console.log('3');
             setPage(2);
-            console.log('klsajdflsakdjflksdjf');
         };
 
         // event handler: Signup Button click event
@@ -498,12 +491,12 @@ export default function Authentication() {
         };
 
         // effect: 두번째 페이지로 이동 시 실행 될 함수
-        // useEffect(() => {
-        //     if (page === 2) {
-        //         if (!nicknameRef.current) return;
-        //         nicknameRef.current.focus();
-        //     }
-        // }, [page]);
+        useEffect(() => {
+            if (page === 2) {
+                if (!nicknameRef.current) return;
+                nicknameRef.current.focus();
+            }
+        }, [page]);
 
         // render: sign up card component Rendering
         return (
