@@ -174,7 +174,7 @@ export default function Header() {
         // render: Upload Button Component Rendering
         if (title && content)
             return (
-                <div className="black-=button" onClick={onUploadButtonClickHandler}>
+                <div className="black-button" onClick={onUploadButtonClickHandler}>
                     {'업로드'}
                 </div>
             );
