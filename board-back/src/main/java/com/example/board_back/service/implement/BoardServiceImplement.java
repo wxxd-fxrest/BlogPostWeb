@@ -7,15 +7,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
+import com.example.board_back.dto.request.board.PostCommentRequestDTO;
 import com.example.board_back.dto.response.ResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
+import com.example.board_back.dto.response.board.PostCommentResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
 import com.example.board_back.entity.BoardEntity;
+import com.example.board_back.entity.CommentEntity;
 import com.example.board_back.entity.FavoriteEntity;
 import com.example.board_back.entity.ImageEntity;
 import com.example.board_back.repository.BoardRepository;
+import com.example.board_back.repository.CommentRepository;
 import com.example.board_back.repository.FavoriteRepository;
 import com.example.board_back.repository.ImageRepository;
 import com.example.board_back.repository.UserRepository;
@@ -32,6 +36,7 @@ public class BoardServiceImplement implements BoardService {
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
     private final FavoriteRepository favoriteRepository;
+    private final CommentRepository commentRepository;
 
     // POST board 
     @Override
@@ -118,7 +123,7 @@ public class BoardServiceImplement implements BoardService {
         return PutFavoriteResponseDTO.success();
     }
 
-    // Get favorite list 
+    // GET favorite list 
     @Override
     public ResponseEntity<? super GetFavoriteListResponseDTO> getFavoriteList(Integer boardNumber) {
         List<GetFavoriteListResultSet> resultSets = new ArrayList<>();
@@ -135,5 +140,29 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetFavoriteListResponseDTO.success(resultSets);
+    }
+
+    // POST comment 
+    @Override
+    public ResponseEntity<? super PostCommentResponseDTO> postComment(PostCommentRequestDTO dto, Integer boardNumber, String email) {
+        try {
+            BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
+            if(boardEntity == null) return PostCommentResponseDTO.noExistBoard();
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return PostBoardResponseDTO.noExistUser();
+
+            CommentEntity commentEntity = new CommentEntity(dto, boardNumber, email);
+            commentRepository.save(commentEntity);
+
+            boardEntity.increaseCommentCount();
+            boardRepository.save(boardEntity);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return PostCommentResponseDTO.success();
     }
 }
