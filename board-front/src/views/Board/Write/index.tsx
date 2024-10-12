@@ -1,11 +1,17 @@
+import { MAIN_PATH } from 'constant';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useBoardStore } from 'stores';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import { useBoardStore, useLoginUserStore } from 'stores';
 import './style.css';
 
 // component: Board Write Component
 export default function BoardWrite() {
     // state: error state
     const [error, setError] = useState<boolean>(false);
+
+    // state: cookie state
+    const [cookies, setCookie] = useCookies();
 
     // state: textarea/input ref state
     const titleRef = useRef<HTMLTextAreaElement | null>(null);
@@ -20,6 +26,9 @@ export default function BoardWrite() {
 
     // state: post image preview url state
     const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+    // function: navigate func
+    const navigator = useNavigate();
 
     // event handler: title change event func
     const onTitleChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -81,6 +90,11 @@ export default function BoardWrite() {
 
     // effect: refresh -> reset effect
     useEffect(() => {
+        const accessToken = cookies.accessToken;
+        if (!accessToken) {
+            navigator(MAIN_PATH());
+            return;
+        }
         resetBoard();
     }, []);
 

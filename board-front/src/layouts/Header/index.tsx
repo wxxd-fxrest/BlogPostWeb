@@ -1,3 +1,7 @@
+import { fileUploadRequest, postBoardRequest } from 'apis';
+import { PostBoardRequestDTO } from 'apis/request/baord';
+import { ResponseDTO } from 'apis/response';
+import { PostBoardResponseDTO } from 'apis/response/board';
 import {
     AUTH_PATH,
     BOARD_DETAIL_PATH,
@@ -169,7 +173,42 @@ export default function Header() {
         // state: 게시글 상태
         const { title, content, boardImageFileList, resetBoard } = useBoardStore();
 
-        const onUploadButtonClickHandler = () => {};
+        // event handler: board upload button click event
+        const onUploadButtonClickHandler = async () => {
+            const accessToken = cookies.accessToken;
+            if (!accessToken) return;
+
+            const boardImageList: string[] = [];
+            for (const file of boardImageFileList) {
+                const data = new FormData();
+                data.append('file', file);
+
+                const url = await fileUploadRequest(data);
+                if (url) boardImageList.push(url);
+            }
+
+            const requestBody: PostBoardRequestDTO = {
+                title,
+                content,
+                boardImageList,
+            };
+            postBoardRequest(requestBody, accessToken).then(poseBoardResponse);
+        };
+
+        // function: post board response func
+        const poseBoardResponse = (responseBody: PostBoardResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code === 'AF' || code === 'NU') navigator(AUTH_PATH());
+            if (code === 'VF') alert('제목과 내용은 필수사항 입니다.');
+            if (code !== 'SU') return;
+
+            resetBoard();
+            if (!loginUser) return;
+            const { email } = loginUser;
+            navigator(USER_PATH(email));
+        };
 
         // render: Upload Button Component Rendering
         if (title && content)
