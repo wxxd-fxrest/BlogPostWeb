@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
 import com.example.board_back.dto.response.ResponseDTO;
+import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.entity.BoardEntity;
 import com.example.board_back.entity.ImageEntity;
 import com.example.board_back.repository.BoardRepository;
 import com.example.board_back.repository.ImageRepository;
 import com.example.board_back.repository.UserRepository;
+import com.example.board_back.repository.resultSet.GetBoardResultSet;
 import com.example.board_back.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,29 @@ public class BoardServiceImplement implements BoardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
+
+    @Override
+    public ResponseEntity<? super GetBoardResponseDTO> getBoard(Integer boardNumber) {
+        GetBoardResultSet resultSet = null;
+        List<ImageEntity> imageEntities = new ArrayList<>();
+
+        try {
+            resultSet = boardRepository.getBoard(boardNumber);
+            if(resultSet == null) return GetBoardResponseDTO.noExistBoard();
+
+            imageEntities = imageRepository.findByBoardNumber(boardNumber);
+
+            BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetBoardResponseDTO.success(resultSet, imageEntities);
+    }
 
     @Override
     public ResponseEntity<? super PostBoardResponseDTO> postBoard(PostBoardRequestDTO dto, String email) {
@@ -53,5 +78,4 @@ public class BoardServiceImplement implements BoardService {
 
         return PostBoardResponseDTO.success();
     }
-    
 }
