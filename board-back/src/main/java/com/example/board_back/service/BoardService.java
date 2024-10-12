@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
 import com.example.board_back.dto.request.board.PostCommentRequestDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
+import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.dto.response.board.PostCommentResponseDTO;
@@ -18,4 +19,5 @@ public interface BoardService {
     ResponseEntity<? super GetFavoriteListResponseDTO> getFavoriteList(Integer boardNumber);
 
     ResponseEntity<? super PostCommentResponseDTO> postComment(PostCommentRequestDTO dto, Integer boardNumber, String email);
+    ResponseEntity<? super GetCommentListResponseDTO> getCommentList(Integer boardNumber);
 }
