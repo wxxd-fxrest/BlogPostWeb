@@ -9,8 +9,8 @@ import com.example.board_back.repository.resultSet.GetBoardResultSet;
 
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
-    // POST put favorite
-    // boolean existsByBoardNumber(Integer boardNumber);
+    // GET favorite list 
+    boolean existsByBoardNumber(Integer boardNumber);
 
     // GET specific board 
     BoardEntity findByBoardNumber(Integer boardNumber);

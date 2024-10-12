@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
 import com.example.board_back.dto.response.ResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
+import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
 import com.example.board_back.entity.BoardEntity;
@@ -19,6 +20,7 @@ import com.example.board_back.repository.FavoriteRepository;
 import com.example.board_back.repository.ImageRepository;
 import com.example.board_back.repository.UserRepository;
 import com.example.board_back.repository.resultSet.GetBoardResultSet;
+import com.example.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.example.board_back.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -114,5 +116,24 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return PutFavoriteResponseDTO.success();
+    }
+
+    // Get favorite list 
+    @Override
+    public ResponseEntity<? super GetFavoriteListResponseDTO> getFavoriteList(Integer boardNumber) {
+        List<GetFavoriteListResultSet> resultSets = new ArrayList<>();
+
+        try {
+            boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);
+            if(!existedBoard) return GetFavoriteListResponseDTO.noExistBoard();
+
+            resultSets = favoriteRepository.getFavoriteList(boardNumber);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetFavoriteListResponseDTO.success(resultSets);
     }
 }
