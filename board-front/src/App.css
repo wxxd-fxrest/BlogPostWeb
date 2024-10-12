@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+.emphasis {
+    font-weight: bolder;
+}
+
 .disable-button {
     border-radius: 46px;
     width: 95px;
@@ -151,4 +155,28 @@
 
 .close-icon {
     background-image: url(assets/images/close.png);
+}
+
+.more-icon {
+    background-image: url(assets/images/more.png);
+}
+
+.favorite-fill-icon {
+    background-image: url(assets/images/favorite-fill.png);
+}
+
+.favorite-light-icon {
+    background-image: url(assets/images/favorite-light.png);
+}
+
+.up-light-icon {
+    background-image: url(assets/images/expand-up-light.png);
+}
+
+.down-light-icon {
+    background-image: url(assets/images/expand-down-light.png);
+}
+
+.comment-icon {
+    background-image: url(assets/images/chat-light.png);
 }
