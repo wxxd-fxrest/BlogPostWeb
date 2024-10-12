@@ -19,12 +19,12 @@ const favoriteListMock: FavoriteListItem[] = [
     {
         email: '4email@email.com',
         nickname: '나는WOOD-4',
-        profileImage: 'https://i.pinimg.com/474x/0c/85/c1/0c85c165ef0cefc54a9172bbf5242043.jpg',
+        profileImage: 'https://i.pinimg.com/enabled_hi/564x/9d/89/35/9d8935798a30736c8b0ef8523c063493.jpg',
     },
     {
         email: '5email@email.com',
         nickname: '나는WOOD-5',
-        profileImage: 'https://i.pinimg.com/474x/0c/85/c1/0c85c165ef0cefc54a9172bbf5242043.jpg',
+        profileImage: 'https://i.pinimg.com/enabled_hi/564x/9d/89/35/9d8935798a30736c8b0ef8523c063493.jpg',
     },
     {
         email: '6email@email.com',

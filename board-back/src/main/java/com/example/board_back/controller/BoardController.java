@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
+import com.example.board_back.dto.request.board.PostCommentRequestDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
+import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
+import com.example.board_back.dto.response.board.PostCommentResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
 import com.example.board_back.service.BoardService;
 
@@ -47,6 +50,18 @@ public class BoardController {
     @GetMapping("/{boardNumber}")
     public ResponseEntity<? super GetBoardResponseDTO> getBoard(@PathVariable("boardNumber") Integer boardNumber) {
         ResponseEntity<? super GetBoardResponseDTO> response = boardService.getBoard(boardNumber);
+        return response;
+    }
+
+    @PostMapping("/{boardNumber}/comment")
+    public ResponseEntity<? super PostCommentResponseDTO> postComment(@RequestBody @Valid PostCommentRequestDTO requestBody, @PathVariable("boardNumber") Integer boardNumber, @AuthenticationPrincipal String email) {
+        ResponseEntity<? super PostCommentResponseDTO> response = boardService.postComment(requestBody, boardNumber, email);
+        return response; 
+    }
+
+    @GetMapping("/{boardNumber}/comment-list")
+    public ResponseEntity<? super GetCommentListResponseDTO> getCommentList(@PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super GetCommentListResponseDTO> response = boardService.getCommentList(boardNumber);
         return response;
     }
 }
