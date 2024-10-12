@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class boardListItem {
+public class BoardListItem {
     private int board_number;
     private String title;
     private String content;
