@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { SigninRequestDTO, SignupRequestDTO } from './request/auth';
-import { PostBoardRequestDTO, PostCommentRequestDTO } from './request/baord';
+import { patchBoardRequestDTO, PostBoardRequestDTO, PostCommentRequestDTO } from './request/baord';
 import { ResponseDTO } from './response';
 import { SigninResponseDTO, SignupResponseDTO } from './response/auth';
 import {
@@ -8,6 +8,7 @@ import {
     GetCommentListResponseDTO,
     GetFavoriteListResponseDTO,
     IncreaseViewCountResponseDTO,
+    PatchBoardResponseDTO,
     PostBoardResponseDTO,
     PostCommentResponseDTO,
     PutFavoriteResponseDTO,
@@ -56,6 +57,9 @@ const POST_COMMENT_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/
 
 // description: DELETE comment delete
 const DELETE_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
+
+// description: PATCH board update
+const PATCH_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
 
 // function: Sign in API
 export const signInRequest = async (requestBody: SigninRequestDTO) => {
@@ -243,6 +247,26 @@ export const deleteBoardRequest = async (boardNumber: number | string, accessTok
         .delete(DELETE_BOARD_URL(boardNumber), authorization(accessToken))
         .then((response) => {
             const responseBody: PostCommentResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Patch board update API
+export const patchBoardRequest = async (
+    boardNumber: number | string,
+    requestBody: patchBoardRequestDTO,
+    accessToken: string
+) => {
+    const result = await axios
+        .patch(PATCH_BOARD_URL(boardNumber), requestBody, authorization(accessToken))
+        .then((response) => {
+            const responseBody: PatchBoardResponseDTO = response.data;
             return responseBody;
         })
         .catch((error) => {
