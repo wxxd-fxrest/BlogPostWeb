@@ -3,7 +3,7 @@ import { SigninRequestDTO, SignupRequestDTO } from './request/auth';
 import { PostBoardRequestDTO } from './request/baord';
 import { ResponseDTO } from './response';
 import { SigninResponseDTO, SignupResponseDTO } from './response/auth';
-import { PostBoardResponseDTO } from './response/board';
+import { GetBoardResponseDTO, IncreaseViewCountResponseDTO, PostBoardResponseDTO } from './response/board';
 import { GetSignInUserResponseDTO } from './response/user';
 
 const DOMAIN = 'http://localhost:4000';
@@ -26,6 +26,13 @@ const multipartFormData = { headers: { 'Content-Type': 'multipart/form-data' } }
 
 // description: POST board
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+// description: GET board
+const GET_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
+
+// description: GET increase view count
+const INCREASE_VIEW_COUTN_URL = (boardNumber: number | string) =>
+    `${API_DOMAIN}/board/${boardNumber}/increase-view-count`;
 
 // function: Sign in API
 export const signInRequest = async (requestBody: SigninRequestDTO) => {
@@ -103,6 +110,38 @@ export const fileUploadRequest = async (data: FormData) => {
         })
         .catch((error) => {
             return null;
+        });
+    return result;
+};
+
+// function: Get Board data API
+export const getBoardRequest = async (boardNumber: number | string) => {
+    const result = await axios
+        .get(GET_BOARD_URL(boardNumber))
+        .then((response) => {
+            const responseBody: GetBoardResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get increase view count API
+export const increaseViewCountRequest = async (boardNumber: number | string) => {
+    const result = await axios
+        .get(INCREASE_VIEW_COUTN_URL(boardNumber))
+        .then((response) => {
+            const responseBody: IncreaseViewCountResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
         });
     return result;
 };

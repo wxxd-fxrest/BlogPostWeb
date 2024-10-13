@@ -10,12 +10,22 @@ import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { useLoginUserStore } from 'stores';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BOARD_PATH, BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH } from 'constant';
-import boardMock from 'mocks/board.mock';
+import { getBoardRequest, increaseViewCountRequest } from 'apis';
+import { GetBoardResponseDTO, IncreaseViewCountResponseDTO } from 'apis/response/board';
+import { ResponseDTO } from 'apis/response';
 
 // component: Board Detail Component
 export default function BoardDetail() {
     // function: useNavigate()
     const navigator = useNavigate();
+
+    // function: increase view count response func
+    const increaseViewCountResponse = (responseBody: IncreaseViewCountResponseDTO | ResponseDTO | null) => {
+        if (!responseBody) return;
+        const { code } = responseBody;
+        if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+        if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    };
 
     // state: board number path variable state
     const { boardNumber } = useParams();
@@ -30,6 +40,31 @@ export default function BoardDetail() {
 
         // state: more button state
         const [showMore, setShowMore] = useState<boolean>(false);
+
+        // state: board owner user state
+        const [isOwner, setOwner] = useState<Boolean>(false);
+
+        // function: get board response func
+        const getBoardResponse = (responseBody: GetBoardResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') {
+                navigator(MAIN_PATH());
+                return;
+            }
+
+            const board: Board = { ...(responseBody as GetBoardResponseDTO) };
+            setBoard(board);
+
+            if (!loginUser) {
+                setOwner(false);
+                return;
+            }
+            const isOwner = loginUser.email === board.writerEmail;
+            setOwner(isOwner);
+        };
 
         // event handler: profile info box button click event
         const onProfileInfoBoxButtonClickHandler = () => {
@@ -59,7 +94,11 @@ export default function BoardDetail() {
 
         // effect: boarNumber 변경 시 실행 될 effect
         useEffect(() => {
-            setBoard(boardMock);
+            if (!boardNumber) {
+                navigator(MAIN_PATH());
+                return;
+            }
+            getBoardRequest(boardNumber).then(getBoardResponse);
         }, [boardNumber]);
 
         // render: Detail Top Component Rendering
@@ -67,7 +106,7 @@ export default function BoardDetail() {
         return (
             <div id="board-detail-top">
                 <div className="board-detail-top-header">
-                    <div className="board-detail-title">{'제목임'}</div>
+                    <div className="board-detail-title">{board.title}</div>
                     <div className="board-detail-top-sub-box">
                         <div className="board-detail-write-info-box" onClick={onProfileInfoBoxButtonClickHandler}>
                             <div
@@ -82,9 +121,11 @@ export default function BoardDetail() {
                             <div className="board-detail-info-divider">{'|'}</div>
                             <div className="board-detail-write-date">{board.writeDatetime}</div>
                         </div>
-                        <div className="icon-button" onClick={onMoreButtonClickHandler}>
-                            <div className="icon more-icon"></div>
-                        </div>
+                        {isOwner && (
+                            <div className="icon-button" onClick={onMoreButtonClickHandler}>
+                                <div className="icon more-icon"></div>
+                            </div>
+                        )}
                         {showMore && (
                             <div className="board-detail-more-box">
                                 <div className="board-detail-update-button" onClick={onUpdateButtonClickHandler}>
@@ -252,6 +293,18 @@ export default function BoardDetail() {
             </div>
         );
     };
+
+    // effect: board number path variable 변경 시 조회수 증가
+    let effectFlag = true;
+    useEffect(() => {
+        if (!boardNumber) return;
+        if (effectFlag) {
+            effectFlag = false;
+            return;
+        }
+
+        increaseViewCountRequest(boardNumber).then(increaseViewCountResponse);
+    }, [boardNumber]);
 
     // render: Board Detail Component Rendering
     return (

@@ -12,6 +12,7 @@ import com.example.board_back.dto.response.ResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
+import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.dto.response.board.PostCommentResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
@@ -81,10 +82,6 @@ public class BoardServiceImplement implements BoardService {
             if(resultSet == null) return GetBoardResponseDTO.noExistBoard();
 
             imageEntities = imageRepository.findByBoardNumber(boardNumber);
-
-            BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            boardEntity.increaseViewCount();
-            boardRepository.save(boardEntity);
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -184,5 +181,21 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetCommentListResponseDTO.success(resultSets);
+    }
+
+    @Override
+    public ResponseEntity<? super IncreaseViewCountResponseDTO> increaseViewCount(Integer boardNumber) {
+        try {
+            BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
+            if(boardEntity == null) return IncreaseViewCountResponseDTO.noExistBoard();
+
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return IncreaseViewCountResponseDTO.success();
     }
 }
