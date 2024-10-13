@@ -5,7 +5,10 @@ import java.util.List;
 
 import com.example.board_back.repository.resultSet.GetCommentListResultSet;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 @Getter
 @NoArgsConstructor
