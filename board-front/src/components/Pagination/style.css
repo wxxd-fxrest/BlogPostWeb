@@ -1,0 +1,42 @@
+#paginaiton-wrapper {
+    display: flex;
+    gap: 20px;
+}
+
+.paginaiton-change-link-box {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.paginaiton-change-link-text {
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 140%;
+}
+
+.paginaiton-divider {
+    color: rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 140%;
+    cursor: default;
+}
+
+.paginaiton-text-active {
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 140%;
+    cursor: default;
+}
+
+.paginaiton-text {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 140%;
+    cursor: pointer;
+}

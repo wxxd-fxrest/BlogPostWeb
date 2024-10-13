@@ -20,8 +20,8 @@ export default function CommentItem({ commentListItem }: Props) {
 
     // function: write date time elapsed func
     const getElapsedTime = () => {
-        const now = dayjs().add(9, 'hour');
-        const writeTime = dayjs(writeDatetime);
+        const now = dayjs(); // UTC로 현재 시간
+        const writeTime = dayjs(writeDatetime); // writeDatetime이 UTC로 저장되어 있다고 가정
 
         const gap = now.diff(writeTime, 's');
         if (gap < 60) return `${gap}초 전`;
