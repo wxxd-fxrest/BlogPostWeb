@@ -1,5 +1,5 @@
-import { fileUploadRequest, postBoardRequest } from 'apis';
-import { PostBoardRequestDTO } from 'apis/request/baord';
+import { fileUploadRequest, patchBoardRequest, postBoardRequest } from 'apis';
+import { patchBoardRequestDTO, PostBoardRequestDTO } from 'apis/request/baord';
 import { ResponseDTO } from 'apis/response';
 import { PostBoardResponseDTO } from 'apis/response/board';
 import {
@@ -31,6 +31,9 @@ export default function Header() {
 
     // state: path state
     const { pathname } = useLocation();
+
+    // state: board number state
+    const { boardNumber } = useParams();
 
     // state: path page state
     const [isAuthPage, setAuthPage] = useState<boolean>(false);
@@ -187,12 +190,23 @@ export default function Header() {
                 if (url) boardImageList.push(url);
             }
 
-            const requestBody: PostBoardRequestDTO = {
-                title,
-                content,
-                boardImageList,
-            };
-            postBoardRequest(requestBody, accessToken).then(poseBoardResponse);
+            const isWriterPage = pathname === BOARD_PATH() + '/' + BOARD_WRITE_PATH();
+            if (isWriterPage) {
+                const requestBody: PostBoardRequestDTO = {
+                    title,
+                    content,
+                    boardImageList,
+                };
+                postBoardRequest(requestBody, accessToken).then(poseBoardResponse);
+            } else {
+                if (!boardNumber) return;
+                const requestBody: patchBoardRequestDTO = {
+                    title,
+                    content,
+                    boardImageList,
+                };
+                patchBoardRequest(boardNumber, requestBody, accessToken).then(patchBoardResponse);
+            }
         };
 
         // function: post board response func
@@ -210,6 +224,19 @@ export default function Header() {
             navigator(USER_PATH(email));
         };
 
+        // function: patch board response
+        const patchBoardResponse = (responseBody: PostBoardResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code === 'AF' || code === 'NU' || code === 'NB' || code === 'NP') navigator(AUTH_PATH());
+            if (code === 'VF') alert('제목과 내용은 필수사항 입니다.');
+            if (code !== 'SU') return;
+
+            if (!boardNumber) return;
+            navigator(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(boardNumber));
+        };
+
         // render: Upload Button Component Rendering
         if (title && content)
             return (
@@ -225,16 +252,22 @@ export default function Header() {
     useEffect(() => {
         const isAuthPage = pathname.startsWith(AUTH_PATH());
         setAuthPage(isAuthPage);
+
         const isMainPage = pathname === MAIN_PATH();
         setMainPage(isMainPage);
+
         const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
         setSearchPage(isSearchPage);
+
         const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
         setBoardDetailPage(isBoardDetailPage);
+
         const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
         setBoardWritePage(isBoardWritePage);
+
         const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
         setBoardUpadatePage(isBoardUpdatePage);
+
         const isUserPage = pathname.startsWith(USER_PATH(''));
         setUserPage(isUserPage);
     }, [pathname]);
