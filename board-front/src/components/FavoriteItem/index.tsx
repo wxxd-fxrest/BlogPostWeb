@@ -3,6 +3,7 @@ import './style.css';
 import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { FavoriteListItem } from 'types/inderface';
 import { useNavigate } from 'react-router-dom';
+import { USER_PATH } from 'constant';
 
 interface Props {
     favoriteListItem: FavoriteListItem;
@@ -11,19 +12,20 @@ interface Props {
 // component: Top3 List Item 컴포넌트
 export default function FavoriteItem({ favoriteListItem }: Props) {
     // state: properties
-    const { nickname, profileImage } = favoriteListItem;
+    const { email, nickname, profileImage } = favoriteListItem;
 
-    // function: 네비게이트 함수
-    // const navigator = useNavigate();
+    // function: useNavigate()
+    const navigator = useNavigate();
 
-    // event handler: 게시물 아이템 클릭 이벤트 처리
-    const onClickHandler = () => {
-        // navigator(boardNumber);
+    // event handler: profile info box button click event
+    const onProfileInfoBoxButtonClickHandler = () => {
+        if (!email) return;
+        navigator(USER_PATH(email));
     };
 
     // render: Top3 List Item 컴포넌트 렌더링
     return (
-        <div className="favorite-list-item" onClick={onClickHandler}>
+        <div className="favorite-list-item" onClick={onProfileInfoBoxButtonClickHandler}>
             <div className="favorite-list-item-profile-box">
                 <div
                     className="favorite-list-item-profile-image"
