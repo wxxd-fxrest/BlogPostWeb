@@ -88,6 +88,14 @@
     justify-self: center;
 }
 
+.icon-box-small {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-self: center;
+}
+
 .icon-button {
     border-radius: 50% 50%;
     width: 24px;
@@ -119,6 +127,13 @@
 
 .expand-right-light-icon {
     background-image: url(assets/images/expand-right-light.png);
+}
+
+.expand-left-icon {
+    background-image: url(assets/images/expand-left.png);
+}
+.expand-right-icon {
+    background-image: url(assets/images/expand-right.png);
 }
 
 .logo-light-icon {

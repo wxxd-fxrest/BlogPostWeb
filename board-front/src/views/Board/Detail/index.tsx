@@ -30,6 +30,7 @@ import { ResponseDTO } from 'apis/response';
 import dayjs from 'dayjs';
 import { useCookies } from 'react-cookie';
 import { PostCommentRequestDTO } from 'apis/request/baord';
+import { usePagination } from 'hooks';
 
 // component: Board Detail Component
 export default function BoardDetail() {
@@ -193,12 +194,26 @@ export default function BoardDetail() {
 
     // component: Board Detail bottom component
     const BoardDetailBottom = () => {
+        // state pagination ref state
+        const {
+            currentPage,
+            currentSection,
+            viewList,
+            viewPageList,
+            totalSection,
+            setCurrentPage,
+            setCurrentSection,
+            setTotalList,
+        } = usePagination<CommentListItem>(5);
+
         // state: comment ref state
         const commentRef = useRef<HTMLTextAreaElement | null>(null);
 
-        // state: favorite/comment list state
+        // state: favorite list state
         const [favoriteList, setFavoriteList] = useState<FavoriteListItem[]>([]);
-        const [commentList, setCommentList] = useState<CommentListItem[]>([]);
+
+        // state: total comment count state
+        const [totalCommentCount, setTotalCommentCount] = useState<number>(0);
 
         // state: favorite/comment change state
         const [isFavorite, setFavorite] = useState<boolean>(false);
@@ -237,7 +252,8 @@ export default function BoardDetail() {
             if (code !== 'SU') return;
 
             const { commentList } = responseBody as GetCommentListResponseDTO;
-            setCommentList(commentList);
+            setTotalList(commentList);
+            setTotalCommentCount(commentList.length);
         };
 
         // function: put favorite response func
@@ -335,7 +351,7 @@ export default function BoardDetail() {
                         <div className="icon-button">
                             <div className="icon comment-icon"></div>
                         </div>
-                        <div className="board-detail-bottom-button-text">{`댓글 ${commentList.length}`}</div>
+                        <div className="board-detail-bottom-button-text">{`댓글 ${totalCommentCount}`}</div>
                         <div className="icon-button" onClick={onShowCommentButtonClickHandler}>
                             {showComment ? (
                                 <div className="icon up-light-icon"></div>
@@ -365,10 +381,10 @@ export default function BoardDetail() {
                         <div className="board-detail-bottom-comment-container">
                             <div className="board-detail-bottom-comment-title">
                                 {'댓글 '}
-                                <span className="emphasis">{commentList.length}</span>
+                                <span className="emphasis">{viewList.length}</span>
                             </div>
                             <div className="board-detail-bottom-comment-list-container">
-                                {commentList.map((item, i) => (
+                                {viewList.map((item, i) => (
                                     <CommentItem key={i} commentListItem={item} />
                                 ))}
                             </div>
@@ -376,7 +392,14 @@ export default function BoardDetail() {
 
                         <div className="divider"></div>
                         <div className="board-detail-bottom-comment-pagination-box">
-                            <Pagination />
+                            <Pagination
+                                currentPage={currentPage}
+                                currentSection={currentSection}
+                                setCurrentPage={setCurrentPage}
+                                setCurrentSection={setCurrentSection}
+                                viewPageList={viewPageList}
+                                totalSection={totalSection}
+                            />
                         </div>
                         {loginUser !== null && (
                             <div className="board-detail-bottom-comment-input-container">
