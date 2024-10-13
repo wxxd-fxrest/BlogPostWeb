@@ -13,12 +13,14 @@ import lombok.*;
 public class CommentListItem {
     private String nickname;
     private String profileImage;
+    private String userEmail;
     private String writeDatetime;
     private String content;
 
     public CommentListItem(GetCommentListResultSet resultSet) {
         this.nickname = resultSet.getNickName();
         this.profileImage = resultSet.getProfileImage();
+        this.userEmail = resultSet.getUserEmail();
         this.writeDatetime = resultSet.getWriteDatetime();
         this.content = resultSet.getContent();
     }
