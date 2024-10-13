@@ -15,6 +15,7 @@ import com.example.board_back.dto.request.board.PostCommentRequestDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
+import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.dto.response.board.PostCommentResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
@@ -62,6 +63,12 @@ public class BoardController {
     @GetMapping("/{boardNumber}/comment-list")
     public ResponseEntity<? super GetCommentListResponseDTO> getCommentList(@PathVariable("boardNumber") Integer boardNumber) {
         ResponseEntity<? super GetCommentListResponseDTO> response = boardService.getCommentList(boardNumber);
+        return response;
+    }
+
+    @GetMapping("/{boardNumber}/increase-view-count")
+    public ResponseEntity<? super IncreaseViewCountResponseDTO> increasseViewCount(@PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super IncreaseViewCountResponseDTO> response = boardService.increaseViewCount(boardNumber);
         return response;
     }
 }

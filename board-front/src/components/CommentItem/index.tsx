@@ -3,6 +3,7 @@ import './style.css';
 import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { BoardListItem, CommentListItem } from 'types/inderface';
 import { useNavigate } from 'react-router-dom';
+import { USER_PATH } from 'constant';
 
 interface Props {
     commentListItem: CommentListItem;
@@ -11,20 +12,21 @@ interface Props {
 // component: Top3 List Item 컴포넌트
 export default function CommentItem({ commentListItem }: Props) {
     // state: properties
-    const { nickname, profileImage, writeDatetime, content } = commentListItem;
+    const { nickname, profileImage, userEmail, writeDatetime, content } = commentListItem;
 
-    // function: 네비게이트 함수
-    // const navigator = useNavigate();
+    // function: useNavigate()
+    const navigator = useNavigate();
 
-    // event handler: 게시물 아이템 클릭 이벤트 처리
-    const onClickHandler = () => {
-        // navigator(boardNumber);
+    // event handler: profile info box button click event
+    const onProfileInfoBoxButtonClickHandler = () => {
+        if (!userEmail) return;
+        navigator(USER_PATH(userEmail));
     };
 
     // render: Top3 List Item 컴포넌트 렌더링
     return (
-        <div className="comment-list-item" onClick={onClickHandler}>
-            <div className="comment-list-item-top">
+        <div className="comment-list-item">
+            <div className="comment-list-item-top" onClick={onProfileInfoBoxButtonClickHandler}>
                 <div className="comment-list-item-profile-box">
                     <div
                         className="comment-list-item-profile-image"

@@ -8,6 +8,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
+}
+
+.comment-list-item-top:hover {
+    background-color: rgba(0, 0, 0, 0.025);
 }
 
 .comment-list-item-profile-box {

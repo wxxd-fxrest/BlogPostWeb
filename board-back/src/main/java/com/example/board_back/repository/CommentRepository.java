@@ -16,6 +16,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
         value = "SELECT " +
         "U.nickname as nickname, " +
         "U.profile_image as profileImage, " +
+        "U.email as userEmail, " + 
         "C.write_datetime as writeDatetime, " +
         "C.content as content " +
         "From comment as C " +
