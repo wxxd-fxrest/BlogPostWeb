@@ -1,8 +1,6 @@
 import CommentItem from 'components/CommentItem';
 import FavoriteItem from 'components/FavoriteItem';
 import Pagination from 'components/Pagination';
-import commentListMock from 'mocks/comment-list.mock';
-import favoriteListMock from 'mocks/favorite-list.mock';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Board, CommentListItem, FavoriteListItem } from 'types/inderface';
 import './style.css';
@@ -10,9 +8,28 @@ import DefaultProfileImage from 'assets/images/default-profile-image.png';
 import { useLoginUserStore } from 'stores';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BOARD_PATH, BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH } from 'constant';
-import { getBoardRequest, increaseViewCountRequest } from 'apis';
-import { GetBoardResponseDTO, IncreaseViewCountResponseDTO } from 'apis/response/board';
+import {
+    deleteBoardRequest,
+    getBoardRequest,
+    getCommentListRequest,
+    getFavoriteListRequest,
+    increaseViewCountRequest,
+    postCommentRequest,
+    putFavoriteRequest,
+} from 'apis';
+import {
+    DeleteBoardResponseDTO,
+    GetBoardResponseDTO,
+    GetCommentListResponseDTO,
+    GetFavoriteListResponseDTO,
+    IncreaseViewCountResponseDTO,
+    PostCommentResponseDTO,
+    PutFavoriteResponseDTO,
+} from 'apis/response/board';
 import { ResponseDTO } from 'apis/response';
+import dayjs from 'dayjs';
+import { useCookies } from 'react-cookie';
+import { PostCommentRequestDTO } from 'apis/request/baord';
 
 // component: Board Detail Component
 export default function BoardDetail() {
@@ -32,6 +49,9 @@ export default function BoardDetail() {
 
     // state: login user state
     const { loginUser } = useLoginUserStore();
+
+    // state: cookies state
+    const [cookies, setCookie] = useCookies();
 
     // component: Board Detail top component
     const BoardDetailTop = () => {
@@ -66,6 +86,28 @@ export default function BoardDetail() {
             setOwner(isOwner);
         };
 
+        // function: write date time format change func
+        const getWriteDatetimeFromat = () => {
+            if (!board) return '';
+            const date = dayjs(board.writeDatetime);
+            return date.format('YYYY. MM. DD.');
+        };
+
+        // function: delete board response func
+        const deleteBoardResponse = (responseBody: DeleteBoardResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'VF') alert('잘못된 접근입니다.');
+            if (code === 'NU') alert('존재하지 않는 유저입니다.');
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'AF') alert('인증에 실패했습니다.');
+            if (code === 'NP') alert('권한이 없습니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') return;
+
+            navigator(MAIN_PATH());
+        };
+
         // event handler: profile info box button click event
         const onProfileInfoBoxButtonClickHandler = () => {
             if (!board) return;
@@ -86,10 +128,9 @@ export default function BoardDetail() {
 
         // event handler: delete button click event
         const onDeleteButtonClickHandler = () => {
-            if (!board || !loginUser) return;
+            if (!boardNumber || !board || !loginUser || !cookies.accessToken) return;
             if (loginUser.email !== board.writerEmail) return;
-            // TODO: Delete Request
-            navigator(MAIN_PATH());
+            deleteBoardRequest(boardNumber, cookies.accessToken).then(deleteBoardResponse);
         };
 
         // effect: boarNumber 변경 시 실행 될 effect
@@ -119,7 +160,7 @@ export default function BoardDetail() {
                             ></div>
                             <div className="board-detail-writer-nickname">{board.writerNickname}</div>
                             <div className="board-detail-info-divider">{'|'}</div>
-                            <div className="board-detail-write-date">{board.writeDatetime}</div>
+                            <div className="board-detail-write-date">{getWriteDatetimeFromat()}</div>
                         </div>
                         {isOwner && (
                             <div className="icon-button" onClick={onMoreButtonClickHandler}>
@@ -167,9 +208,74 @@ export default function BoardDetail() {
         const [showFavorite, setShowFavorite] = useState<boolean>(false);
         const [showComment, setShowComment] = useState<boolean>(false);
 
+        // function: get favorite list response func
+        const getFavoriteListResponse = (responseBody: GetFavoriteListResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') return;
+
+            const { favoriteList } = responseBody as GetFavoriteListResponseDTO;
+            setFavoriteList(favoriteList);
+
+            if (!loginUser) {
+                setFavorite(false);
+                return;
+            }
+
+            const isFavorite = favoriteList.findIndex((favorite) => favorite.email === loginUser.email) !== -1;
+            setFavorite(isFavorite);
+        };
+
+        // function: get comment list response func
+        const getCommentListResponse = (responseBody: GetFavoriteListResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') return;
+
+            const { commentList } = responseBody as GetCommentListResponseDTO;
+            setCommentList(commentList);
+        };
+
+        // function: put favorite response func
+        const putFavoriteResponse = (responseBody: PutFavoriteResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'VF') alert('잘못된 접근입니다.');
+            if (code === 'NU') alert('존재하지 않는 유저입니다.');
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'AF') alert('인증에 실패했습니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') return;
+
+            if (!boardNumber) return;
+            getFavoriteListRequest(boardNumber).then(getFavoriteListResponse);
+        };
+
+        // function: post comment response func
+        const postCommentResponse = (responseBody: PostCommentResponseDTO | ResponseDTO | null) => {
+            if (!responseBody) return;
+            const { code } = responseBody;
+            if (code === 'VF') alert('잘못된 접근입니다.');
+            if (code === 'NU') alert('존재하지 않는 유저입니다.');
+            if (code === 'NB') alert('존재하지 않는 게시글입니다.');
+            if (code === 'AF') alert('인증에 실패했습니다.');
+            if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            if (code !== 'SU') return;
+
+            setComment('');
+
+            if (!boardNumber) return;
+            getCommentListRequest(boardNumber).then(getCommentListResponse);
+        };
+
         // event handler: favorite click event
         const onFavoriteClickHandler = () => {
-            setFavorite(!isFavorite);
+            if (!boardNumber || !loginUser || !cookies.accessToken) return;
+            putFavoriteRequest(boardNumber, cookies.accessToken).then(putFavoriteResponse);
         };
 
         // event handler: show favorite/comment click event
@@ -192,14 +298,16 @@ export default function BoardDetail() {
 
         // event handler: comment submit button click event
         const onCommentSubmitButtonClickHandler = () => {
-            if (!comment) return;
-            alert('댓글 달림 ㅇㅇ');
+            if (!comment || !boardNumber || !loginUser || !cookies.accessToken) return;
+            const requestBody: PostCommentRequestDTO = { content: comment };
+            postCommentRequest(boardNumber, requestBody, cookies.accessToken).then(postCommentResponse);
         };
 
         // effect: boardNumber path variable 변경 -> GET favorite/comment data effect
         useEffect(() => {
-            setFavoriteList(favoriteListMock);
-            setCommentList(commentListMock);
+            if (!boardNumber) return;
+            getFavoriteListRequest(boardNumber).then(getFavoriteListResponse);
+            getCommentListRequest(boardNumber).then(getCommentListResponse);
         }, [boardNumber]);
 
         // render: Detail Bottom Component Rendering
@@ -270,24 +378,27 @@ export default function BoardDetail() {
                         <div className="board-detail-bottom-comment-pagination-box">
                             <Pagination />
                         </div>
-                        <div className="board-detail-bottom-comment-input-container">
-                            <div className="board-detail-bottom-comment-input-box">
-                                <textarea
-                                    ref={commentRef}
-                                    className="board-detail-bottom-comment-textarea"
-                                    placeholder="댓글을 작성해 주세요."
-                                    onChange={onCommentChangeHandler}
-                                />
-                                <div
-                                    className="board-detail-bottom-comment-button-box"
-                                    onClick={onCommentSubmitButtonClickHandler}
-                                >
-                                    <div className={comment === '' ? 'disable-button' : 'black-button'}>
-                                        {'댓글 달기'}
+                        {loginUser !== null && (
+                            <div className="board-detail-bottom-comment-input-container">
+                                <div className="board-detail-bottom-comment-input-box">
+                                    <textarea
+                                        ref={commentRef}
+                                        className="board-detail-bottom-comment-textarea"
+                                        placeholder="댓글을 작성해 주세요."
+                                        value={comment}
+                                        onChange={onCommentChangeHandler}
+                                    />
+                                    <div
+                                        className="board-detail-bottom-comment-button-box"
+                                        onClick={onCommentSubmitButtonClickHandler}
+                                    >
+                                        <div className={comment === '' ? 'disable-button' : 'black-button'}>
+                                            {'댓글 달기'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>

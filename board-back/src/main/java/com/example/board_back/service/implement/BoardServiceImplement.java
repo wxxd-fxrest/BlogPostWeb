@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.board_back.dto.request.board.PostBoardRequestDTO;
 import com.example.board_back.dto.request.board.PostCommentRequestDTO;
 import com.example.board_back.dto.response.ResponseDTO;
+import com.example.board_back.dto.response.board.DeleteBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
@@ -197,5 +198,32 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return IncreaseViewCountResponseDTO.success();
+    }
+
+    @Override
+    public ResponseEntity<? super DeleteBoardResponseDTO> deleteBoard(Integer boardNumber, String email) {
+        try {
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return DeleteBoardResponseDTO.noExistUser();
+            
+            BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
+            if(boardEntity == null) return DeleteBoardResponseDTO.noExistBoard();
+
+            String writerEmail = boardEntity.getWriterEmail();
+            boolean isWriter = writerEmail.equals(email);
+            if(!isWriter) return DeleteBoardResponseDTO.noPermission();
+
+            imageRepository.deleteByBoardNumber(boardNumber);
+            commentRepository.deleteByBoardNumber(boardNumber);
+            favoriteRepository.deleteByBoardNumber(boardNumber);
+
+            boardRepository.delete(boardEntity);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return DeleteBoardResponseDTO.success();
     }
 }
