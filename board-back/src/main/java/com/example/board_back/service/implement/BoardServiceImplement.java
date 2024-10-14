@@ -1,6 +1,10 @@
 package com.example.board_back.service.implement;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,15 +18,19 @@ import com.example.board_back.dto.response.board.DeleteBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
+import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
 import com.example.board_back.dto.response.board.PostCommentResponseDTO;
 import com.example.board_back.dto.response.board.PutFavoriteResponseDTO;
 import com.example.board_back.entity.BoardEntity;
+import com.example.board_back.entity.BoardListViewEntity;
 import com.example.board_back.entity.CommentEntity;
 import com.example.board_back.entity.FavoriteEntity;
 import com.example.board_back.entity.ImageEntity;
+import com.example.board_back.repository.BoardListViewRepository;
 import com.example.board_back.repository.BoardRepository;
 import com.example.board_back.repository.CommentRepository;
 import com.example.board_back.repository.FavoriteRepository;
@@ -43,6 +51,7 @@ public class BoardServiceImplement implements BoardService {
     private final ImageRepository imageRepository;
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
+    private final BoardListViewRepository boardListViewRepository;
 
     // POST board 
     @Override
@@ -262,5 +271,39 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return PatchBaordResponseDTO.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetLatestBoardListResponseDTO> getLatestBoardList() {
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+            boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetLatestBoardListResponseDTO.success(boardListViewEntities);
+    }
+
+    @Override
+    public ResponseEntity<? super GetTop3BoardListResponseDTO> getTop3BoardList() {
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+            Date beforeWeek = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sevenDaysAgo = simpleDateFormat.format(beforeWeek);
+
+            boardListViewEntities = boardListViewRepository.findTop3ByWriteDatetimeGreaterThanOrderByFavoriteCountDescCommentCountDescViewCountDescWriteDatetimeDesc(sevenDaysAgo);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetTop3BoardListResponseDTO.success(boardListViewEntities);
     }
 }

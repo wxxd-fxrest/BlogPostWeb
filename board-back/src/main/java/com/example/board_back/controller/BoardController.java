@@ -19,6 +19,8 @@ import com.example.board_back.dto.response.board.DeleteBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
+import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
@@ -86,6 +88,18 @@ public class BoardController {
     @PatchMapping("/{boardNumber}")
     public ResponseEntity<? super PatchBaordResponseDTO> patchBoard(@RequestBody @Valid PatchBoardRequestDTO requestBody, @PathVariable("boardNumber") Integer boardNumber, @AuthenticationPrincipal String email) {
         ResponseEntity<? super PatchBaordResponseDTO> response = boardService.patchBoard(requestBody, boardNumber, email);
+        return response;
+    }
+
+    @GetMapping("/latest-list")
+    public ResponseEntity<? super GetLatestBoardListResponseDTO> getLatestBoardList() {
+        ResponseEntity<? super GetLatestBoardListResponseDTO>  response = boardService.getLatestBoardList();
+        return response;
+    }
+    
+    @GetMapping("/top-3")
+    public ResponseEntity<? super GetTop3BoardListResponseDTO> getTop3BoardList() {
+        ResponseEntity<? super GetTop3BoardListResponseDTO>  response = boardService.getTop3BoardList();
         return response;
     }
 }
