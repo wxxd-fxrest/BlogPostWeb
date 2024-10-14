@@ -5,6 +5,7 @@
     align-items: center;
     gap: 30px;
     cursor: pointer;
+    border-radius: 8px;
 }
 
 .board-list-item:hover {

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "board_list_view")
 public class BoardListViewEntity {
     @Id
-    private int  boardNumber; 
+    private int boardNumber; 
     private String title; 
     private String content; 
     private String titleImage; 

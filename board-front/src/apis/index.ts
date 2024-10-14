@@ -7,12 +7,15 @@ import {
     GetBoardResponseDTO,
     GetCommentListResponseDTO,
     GetFavoriteListResponseDTO,
+    GetLatestBoardListResponseDTO,
+    GetTop3BoardListResponseDTO,
     IncreaseViewCountResponseDTO,
     PatchBoardResponseDTO,
     PostBoardResponseDTO,
     PostCommentResponseDTO,
     PutFavoriteResponseDTO,
 } from './response/board';
+import { GetPopularWordListResponseDTO } from './response/search';
 import { GetSignInUserResponseDTO } from './response/user';
 
 const DOMAIN = 'http://localhost:4000';
@@ -60,6 +63,15 @@ const DELETE_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/
 
 // description: PATCH board update
 const PATCH_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
+
+// description: GET latest board list
+const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
+
+// description: GET top3 list
+const GET_TOP_3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
+
+// description: GET popular word list
+const GET_POPULAR_WORD_LIST_URL = () => `${API_DOMAIN}/search/popular-list`;
 
 // function: Sign in API
 export const signInRequest = async (requestBody: SigninRequestDTO) => {
@@ -267,6 +279,54 @@ export const patchBoardRequest = async (
         .patch(PATCH_BOARD_URL(boardNumber), requestBody, authorization(accessToken))
         .then((response) => {
             const responseBody: PatchBoardResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get latest board list API
+export const getLatestBoardListRequest = async () => {
+    const result = await axios
+        .get(GET_LATEST_BOARD_LIST_URL())
+        .then((response) => {
+            const responseBody: GetLatestBoardListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get top3 board list API
+export const getTop3BoardListRequest = async () => {
+    const result = await axios
+        .get(GET_TOP_3_BOARD_LIST_URL())
+        .then((response) => {
+            const responseBody: GetTop3BoardListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get popular word list API
+export const getPopularWordListRequest = async () => {
+    const result = await axios
+        .get(GET_POPULAR_WORD_LIST_URL())
+        .then((response) => {
+            const responseBody: GetPopularWordListResponseDTO = response.data;
             return responseBody;
         })
         .catch((error) => {
