@@ -8,6 +8,7 @@ import {
     GetCommentListResponseDTO,
     GetFavoriteListResponseDTO,
     GetLatestBoardListResponseDTO,
+    GetSearchBoardListResponseDTO,
     GetTop3BoardListResponseDTO,
     IncreaseViewCountResponseDTO,
     PatchBoardResponseDTO,
@@ -15,7 +16,7 @@ import {
     PostCommentResponseDTO,
     PutFavoriteResponseDTO,
 } from './response/board';
-import { GetPopularWordListResponseDTO } from './response/search';
+import { GetPopularWordListResponseDTO, GetRelationListResponseDTO } from './response/search';
 import { GetSignInUserResponseDTO } from './response/user';
 
 const DOMAIN = 'http://localhost:4000';
@@ -72,6 +73,13 @@ const GET_TOP_3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
 
 // description: GET popular word list
 const GET_POPULAR_WORD_LIST_URL = () => `${API_DOMAIN}/search/popular-list`;
+
+// description: GET search board list
+const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | null) =>
+    `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`;
+
+// description: GET relation search word list
+const GET_RELATION_LIST_URL = (searchWord: string) => `${API_DOMAIN}/search/${searchWord}/relation-list`;
 
 // function: Sign in API
 export const signInRequest = async (requestBody: SigninRequestDTO) => {
@@ -327,6 +335,38 @@ export const getPopularWordListRequest = async () => {
         .get(GET_POPULAR_WORD_LIST_URL())
         .then((response) => {
             const responseBody: GetPopularWordListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get search board list API
+export const getSearchBoardListRequest = async (searchWord: string, preSearchWord: string | null) => {
+    const result = await axios
+        .get(GET_SEARCH_BOARD_LIST_URL(searchWord, preSearchWord))
+        .then((response) => {
+            const responseBody: GetSearchBoardListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get relation list API
+export const getRelationListRequest = async (searchWord: string) => {
+    const result = await axios
+        .get(GET_RELATION_LIST_URL(searchWord))
+        .then((response) => {
+            const responseBody: GetRelationListResponseDTO = response.data;
             return responseBody;
         })
         .catch((error) => {

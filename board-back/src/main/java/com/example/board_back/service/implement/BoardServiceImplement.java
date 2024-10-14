@@ -19,6 +19,7 @@ import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetSearchBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
@@ -30,11 +31,13 @@ import com.example.board_back.entity.BoardListViewEntity;
 import com.example.board_back.entity.CommentEntity;
 import com.example.board_back.entity.FavoriteEntity;
 import com.example.board_back.entity.ImageEntity;
+import com.example.board_back.entity.SearchLogEntity;
 import com.example.board_back.repository.BoardListViewRepository;
 import com.example.board_back.repository.BoardRepository;
 import com.example.board_back.repository.CommentRepository;
 import com.example.board_back.repository.FavoriteRepository;
 import com.example.board_back.repository.ImageRepository;
+import com.example.board_back.repository.SearchLogRepository;
 import com.example.board_back.repository.UserRepository;
 import com.example.board_back.repository.resultSet.GetBoardResultSet;
 import com.example.board_back.repository.resultSet.GetCommentListResultSet;
@@ -52,6 +55,7 @@ public class BoardServiceImplement implements BoardService {
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
     private final BoardListViewRepository boardListViewRepository;
+    private final SearchLogRepository searchLogRepository;
 
     // POST board 
     @Override
@@ -305,5 +309,28 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetTop3BoardListResponseDTO.success(boardListViewEntities);
+    }
+
+    @Override
+    public ResponseEntity<? super GetSearchBoardListResponseDTO> getSearchBoardList(String searchWord, String preSearchWord) {
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+            boardListViewEntities = boardListViewRepository.findByTitleContainsOrContentContainsOrderByWriteDatetimeDesc(searchWord, preSearchWord);
+
+            SearchLogEntity searchLogEntity = new SearchLogEntity(searchWord, preSearchWord, false);
+            searchLogRepository.save(searchLogEntity);
+
+            boolean relation = preSearchWord != null;
+            if(relation) {
+                searchLogEntity = new SearchLogEntity(preSearchWord, searchWord, relation);
+                searchLogRepository.save(searchLogEntity);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetSearchBoardListResponseDTO.success(boardListViewEntities);
     }
 }

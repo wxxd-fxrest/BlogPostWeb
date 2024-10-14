@@ -10,6 +10,7 @@ import com.example.board_back.dto.response.board.GetBoardResponseDTO;
 import com.example.board_back.dto.response.board.GetCommentListResponseDTO;
 import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetSearchBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
@@ -33,4 +34,6 @@ public interface BoardService {
 
     ResponseEntity<? super GetLatestBoardListResponseDTO> getLatestBoardList();
     ResponseEntity<? super GetTop3BoardListResponseDTO> getTop3BoardList();
+
+    ResponseEntity<? super GetSearchBoardListResponseDTO> getSearchBoardList(String searchWord, String preSearchWord);
 }
