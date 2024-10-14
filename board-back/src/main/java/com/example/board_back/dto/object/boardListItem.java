@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardListItem {
-    private int board_number;
+    private int boardNumber;
     private String title;
     private String content;
     private String boardTitleImage;
@@ -26,7 +26,7 @@ public class BoardListItem {
     private String writerProfileImage;
 
     public BoardListItem(BoardListViewEntity boardListViewEntity) {
-        this.board_number = boardListViewEntity.getBoardNumber();
+        this.boardNumber = boardListViewEntity.getBoardNumber();
         this.title = boardListViewEntity.getTitle();
         this.content = boardListViewEntity.getContent();
         this.boardTitleImage = boardListViewEntity.getTitleImage();
