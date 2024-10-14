@@ -91,8 +91,8 @@ export default function Main() {
             if (code === 'DBE') alert('데이터베이스 오류입니다.');
             if (code !== 'SU') return;
 
-            const { popularwordList } = responseBody as GetPopularWordListResponseDTO;
-            setPopularWordList(popularwordList);
+            const { popularWordList } = responseBody as GetPopularWordListResponseDTO;
+            setPopularWordList(popularWordList);
         };
 
         // event handler: popular word click event
