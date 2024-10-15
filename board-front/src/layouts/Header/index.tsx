@@ -149,26 +149,31 @@ export default function Header() {
             navigator(MAIN_PATH());
         };
 
-        if (isLogin && useremail === loginUser?.email)
+        if ((isLogin && useremail) === loginUser?.email) {
+            console.log('isLogin', isLogin);
+            console.log('useremail', useremail);
+            console.log('loginUser?.email', loginUser?.email);
             // render: Logout Button Component Rendering
             return (
                 <div className="white-button" onClick={onSignOutButtonClickHandler}>
                     {'로그아웃'}
                 </div>
             );
-        if (isLogin)
+        } else if (isLogin) {
             // render: Login Button Component Rendering -> true
             return (
                 <div className="white-button" onClick={onMyPageButtonClickHandler}>
                     {'마이페이지'}
                 </div>
             );
-        return (
-            // render: SignIn Button Component Rendering -> false
-            <div className="black-button" onClick={onSignInButtonClickHandler}>
-                {'로그인'}
-            </div>
-        );
+        } else {
+            return (
+                // render: SignIn Button Component Rendering -> false
+                <div className="black-button" onClick={onSignInButtonClickHandler}>
+                    {'로그인'}
+                </div>
+            );
+        }
     };
 
     // component: Upload Button Component
