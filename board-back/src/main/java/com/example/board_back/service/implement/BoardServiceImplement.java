@@ -21,6 +21,7 @@ import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetSearchBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetUserBoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
@@ -57,7 +58,7 @@ public class BoardServiceImplement implements BoardService {
     private final BoardListViewRepository boardListViewRepository;
     private final SearchLogRepository searchLogRepository;
 
-    // POST board 
+    // description: POST board 
     @Override
     public ResponseEntity<? super PostBoardResponseDTO> postBoard(PostBoardRequestDTO dto, String email) {
         try {
@@ -87,7 +88,7 @@ public class BoardServiceImplement implements BoardService {
         return PostBoardResponseDTO.success();
     }
 
-    // GET specific board 
+    // description: GET specific board 
     @Override
     public ResponseEntity<? super GetBoardResponseDTO> getBoard(Integer boardNumber) {
         GetBoardResultSet resultSet = null;
@@ -107,7 +108,7 @@ public class BoardServiceImplement implements BoardService {
         return GetBoardResponseDTO.success(resultSet, imageEntities);
     }
 
-    // PUT put favorite
+    // description: PUT put favorite
     @Override
     public ResponseEntity<? super PutFavoriteResponseDTO> putFavorite(Integer boardNumber, String email) {
         try {
@@ -138,7 +139,7 @@ public class BoardServiceImplement implements BoardService {
         return PutFavoriteResponseDTO.success();
     }
 
-    // GET favorite list 
+    // description: GET favorite list 
     @Override
     public ResponseEntity<? super GetFavoriteListResponseDTO> getFavoriteList(Integer boardNumber) {
         List<GetFavoriteListResultSet> resultSets = new ArrayList<>();
@@ -157,7 +158,7 @@ public class BoardServiceImplement implements BoardService {
         return GetFavoriteListResponseDTO.success(resultSets);
     }
 
-    // POST comment 
+    // description: POST comment 
     @Override
     public ResponseEntity<? super PostCommentResponseDTO> postComment(PostCommentRequestDTO dto, Integer boardNumber, String email) {
         try {
@@ -181,7 +182,7 @@ public class BoardServiceImplement implements BoardService {
         return PostCommentResponseDTO.success();
     }
 
-    // GET comment
+    // description: GET comment
     @Override
     public ResponseEntity<? super GetCommentListResponseDTO> getCommentList(Integer boardNumber) {
         List<GetCommentListResultSet> resultSets = new ArrayList<>();
@@ -199,6 +200,7 @@ public class BoardServiceImplement implements BoardService {
         return GetCommentListResponseDTO.success(resultSets);
     }
 
+    // description: GET increase view count
     @Override
     public ResponseEntity<? super IncreaseViewCountResponseDTO> increaseViewCount(Integer boardNumber) {
         try {
@@ -215,6 +217,7 @@ public class BoardServiceImplement implements BoardService {
         return IncreaseViewCountResponseDTO.success();
     }
 
+    // description: DELETE board 
     @Override
     public ResponseEntity<? super DeleteBoardResponseDTO> deleteBoard(Integer boardNumber, String email) {
         try {
@@ -242,6 +245,7 @@ public class BoardServiceImplement implements BoardService {
         return DeleteBoardResponseDTO.success();
     }
 
+    // description: PATCH board
     @Override
     public ResponseEntity<? super PatchBaordResponseDTO> patchBoard(PatchBoardRequestDTO dto, Integer boardNumber, String email) {
         try {
@@ -277,6 +281,7 @@ public class BoardServiceImplement implements BoardService {
         return PatchBaordResponseDTO.success();
     }
 
+    // description: GET latest board list 
     @Override
     public ResponseEntity<? super GetLatestBoardListResponseDTO> getLatestBoardList() {
         List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
@@ -292,6 +297,7 @@ public class BoardServiceImplement implements BoardService {
         return GetLatestBoardListResponseDTO.success(boardListViewEntities);
     }
 
+    // description: GET top3 list 
     @Override
     public ResponseEntity<? super GetTop3BoardListResponseDTO> getTop3BoardList() {
         List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
@@ -311,6 +317,7 @@ public class BoardServiceImplement implements BoardService {
         return GetTop3BoardListResponseDTO.success(boardListViewEntities);
     }
 
+    // description: GET search board list
     @Override
     public ResponseEntity<? super GetSearchBoardListResponseDTO> getSearchBoardList(String searchWord, String preSearchWord) {
         List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
@@ -332,5 +339,23 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetSearchBoardListResponseDTO.success(boardListViewEntities);
+    }
+
+    // description: GET user board list 
+    @Override
+    public ResponseEntity<? super GetUserBoardListResponseDTO> getUserBoardList(String email) {
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return GetUserBoardListResponseDTO.noExistUser();
+
+            boardListViewEntities = boardListViewRepository.findByWriterEmailOrderByWriteDatetimeDesc(email);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDTO.databaseError();
+        }
+
+        return GetUserBoardListResponseDTO.success(boardListViewEntities);
     }
 }

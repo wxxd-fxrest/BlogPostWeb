@@ -22,6 +22,7 @@ import com.example.board_back.dto.response.board.GetFavoriteListResponseDTO;
 import com.example.board_back.dto.response.board.GetLatestBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetSearchBoardListResponseDTO;
 import com.example.board_back.dto.response.board.GetTop3BoardListResponseDTO;
+import com.example.board_back.dto.response.board.GetUserBoardListResponseDTO;
 import com.example.board_back.dto.response.board.IncreaseViewCountResponseDTO;
 import com.example.board_back.dto.response.board.PatchBaordResponseDTO;
 import com.example.board_back.dto.response.board.PostBoardResponseDTO;
@@ -108,5 +109,11 @@ public class BoardController {
     public ResponseEntity<? super GetSearchBoardListResponseDTO> getSearchBordList(@PathVariable("searchWord") String searchWord, @PathVariable(value = "preSearchWord", required = false) String preSearchWord) {
         ResponseEntity<? super GetSearchBoardListResponseDTO> response = boardService.getSearchBoardList(searchWord, preSearchWord);
         return response; 
+    }
+
+    @GetMapping("/user-board-list/{email}")
+    public ResponseEntity<? super GetUserBoardListResponseDTO> getUserBoardList(@PathVariable("email") String email) {
+        ResponseEntity<? super GetUserBoardListResponseDTO>  response = boardService.getUserBoardList(email);
+        return response;
     }
 }

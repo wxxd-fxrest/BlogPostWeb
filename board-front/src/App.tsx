@@ -18,10 +18,10 @@ import Main from 'views/Main';
 import Search from 'views/Search';
 import UserPage from 'views/User';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useLoginUserStore } from 'stores';
-import { GetSignInUserRequest } from 'apis';
+import { getSignInUserRequest } from 'apis';
 import { GetSignInUserResponseDTO } from 'apis/response/user';
 import { ResponseDTO } from 'apis/response';
 import { User } from 'types/inderface';
@@ -52,7 +52,7 @@ function App() {
             resetLoginUser();
             return;
         }
-        GetSignInUserRequest(cookies.accessToken).then(GetSignInUserResponse);
+        getSignInUserRequest(cookies.accessToken).then(GetSignInUserResponse);
     }, [cookies.accessToken]);
 
     // render: Application Component Rendering

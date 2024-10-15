@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { SigninRequestDTO, SignupRequestDTO } from './request/auth';
 import { patchBoardRequestDTO, PostBoardRequestDTO, PostCommentRequestDTO } from './request/baord';
+import { PatchNicknameRequestDTO, PatchProfileImageRequestDTO } from './request/user';
 import { ResponseDTO } from './response';
 import { SigninResponseDTO, SignupResponseDTO } from './response/auth';
 import {
@@ -10,6 +11,7 @@ import {
     GetLatestBoardListResponseDTO,
     GetSearchBoardListResponseDTO,
     GetTop3BoardListResponseDTO,
+    GetUserBoardListResponseDTO,
     IncreaseViewCountResponseDTO,
     PatchBoardResponseDTO,
     PostBoardResponseDTO,
@@ -17,7 +19,12 @@ import {
     PutFavoriteResponseDTO,
 } from './response/board';
 import { GetPopularWordListResponseDTO, GetRelationListResponseDTO } from './response/search';
-import { GetSignInUserResponseDTO } from './response/user';
+import {
+    GetSignInUserResponseDTO,
+    GetUserResponseDTO,
+    PatchNicknameResponseDTO,
+    PatchProfileImageResponseDTO,
+} from './response/user';
 
 const DOMAIN = 'http://localhost:4000';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
@@ -81,6 +88,14 @@ const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | n
 // description: GET relation search word list
 const GET_RELATION_LIST_URL = (searchWord: string) => `${API_DOMAIN}/search/${searchWord}/relation-list`;
 
+// description: GET user board list
+const GET_USER_URL = (email: string) => `${API_DOMAIN}/user/${email}`; // 현재 로그인한 사용자
+const GET_USER_BOARD_LIST_URL = (email: string) => `${API_DOMAIN}/board/user-board-list/${email}`; // 타 사용자
+
+// description: PATCH nickname/profile-image
+const PATCH_NICKNAME_URL = () => `${API_DOMAIN}/user/nickname`;
+const PATCH_PROFILE_IMAGE_URL = () => `${API_DOMAIN}/user/profile-image`;
+
 // function: Sign in API
 export const signInRequest = async (requestBody: SigninRequestDTO) => {
     const result = await axios
@@ -117,7 +132,7 @@ export const signUpRequest = async (requestBody: SignupRequestDTO) => {
 };
 
 // function: Get login user API
-export const GetSignInUserRequest = async (accessToken: string) => {
+export const getSignInUserRequest = async (accessToken: string) => {
     const result = await axios
         .get(GET_SIGN_IN_USER_URL(), authorization(accessToken))
         .then((response) => {
@@ -367,6 +382,70 @@ export const getRelationListRequest = async (searchWord: string) => {
         .get(GET_RELATION_LIST_URL(searchWord))
         .then((response) => {
             const responseBody: GetRelationListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get user board list API (타유저)
+export const getUserBoardListRequest = async (email: string) => {
+    const result = await axios
+        .get(GET_USER_BOARD_LIST_URL(email))
+        .then((response) => {
+            const responseBody: GetUserBoardListResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Get user API (로그인한 사용자)
+export const getUserRequest = async (email: string) => {
+    const result = await axios
+        .get(GET_USER_URL(email))
+        .then((response) => {
+            const responseBody: GetUserResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Patch nickname API
+export const patchNicknameRequest = async (requestBody: PatchNicknameRequestDTO, accessToken: string) => {
+    const result = await axios
+        .patch(PATCH_NICKNAME_URL(), requestBody, authorization(accessToken))
+        .then((response) => {
+            const responseBody: PatchNicknameResponseDTO = response.data;
+            return responseBody;
+        })
+        .catch((error) => {
+            if (!error.response) return null;
+            const responseBody: ResponseDTO = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
+
+// function: Patch profile image API
+export const patchProfileImageRequest = async (requestBody: PatchProfileImageRequestDTO, accessToken: string) => {
+    const result = await axios
+        .patch(PATCH_PROFILE_IMAGE_URL(), requestBody, authorization(accessToken))
+        .then((response) => {
+            const responseBody: PatchProfileImageResponseDTO = response.data;
             return responseBody;
         })
         .catch((error) => {
